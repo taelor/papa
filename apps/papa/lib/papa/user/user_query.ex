@@ -4,9 +4,11 @@ defmodule Papa.User.Query do
   alias Papa.Repo
   alias Papa.User
 
-  def call() do
+  def call(opts) do
+    preloads = Keyword.get(opts, :preloads, [])
+
     User
-    |> preload(:visits)
+    |> preload(^preloads)
     |> Repo.all()
   end
 end
