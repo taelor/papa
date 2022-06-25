@@ -101,3 +101,10 @@ Usually I roll my own factories following the ecto guide here: https://hexdocs.p
 But since this is a sample app, I thought we could experiment with a package I've always wanted to use, ex_machina. (https://github.com/thoughtbot/ex_machina) I've used thoughtbot's factories for ruby in the past, and while sometimes they were cumbersome or led to particular setup problems, I feel like they've learned a lot in their history, as well as me, and if used properly, factories can be quite helpful in test.
 
 We can go ahead and refactor the Repo.insert in the user_test.exs to use a factory as well.
+
+https://github.com/taelor/papa/pull/1/commits/45ed89f8b63079c9d05b1aa86eea2d5043b47a75
+
+Finally, I think we have everything to setup to actually do the feature now, which is creating a user.
+
+We are going to want to add a mutatation for the GraphQL API, and write a test for it.
+
