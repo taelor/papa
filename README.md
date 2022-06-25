@@ -62,3 +62,29 @@ Assumption: validation of email format, exisitance, confirmation, etc will come 
 
 mix test apps/papa/test/user/user_test.exs
 ```
+
+https://github.com/taelor/papa/pull/1/commits/390da4208f0d5c58769750f0ebe68c99d0789b30
+
+Next I want to go ahead and write an API request to create a User. In the job description I noticed Papa uses GraphQL, so I'm going to go ahead and use absinthe for our GraphQL functionality. I used absinthe when I worked at Interfolio, so I'm fairly familiar with it. I also want to include GraphIQL so I can have an easy quick way to interact with the API.
+
+```
+# add absinthe to papa_web mix.exs deps
+{:absinthe, "~> 1.7"},
+{:absinthe_plug, "~> 1.5"}
+
+mix deps.get
+```
+
+https://github.com/taelor/papa/pull/1/commits/b9e69ed687f75b84784d4bf842b2ed28691f6a0b
+
+At this point, I have graphiql working, but the users query is returning an empty list. I'm going to go ahead and add some users to the seeds.exs file just as another sanity check that everything is wired up, and we can query for users.
+
+```
+# add some basic user inserts to the seeds.exs file.
+User.changeset(%User{}, %{first_name: "John", last_name: "Doe", email: "john.doe@papa.com"})
+|> Repo.insert!()
+
+# run ecto.reset to tear down and rerun setup, this time running the non-empty seed file.
+mix ecto.reset
+```
+
