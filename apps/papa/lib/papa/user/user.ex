@@ -2,7 +2,10 @@ defmodule Papa.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+<<<<<<< HEAD
   alias Papa.Repo
+=======
+>>>>>>> 7a325b1 (adding visits schema, relationship to user, add to graphql user query)
   alias Papa.Visit
 
   @primary_key {:id, :binary_id, autogenerate: true}

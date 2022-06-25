@@ -1,0 +1,41 @@
+name: "PR Workflow"
+on:
+  - pull_request
+  - workflow_dispatch
+jobs:
+  tests:
+    name: Papa Tests
+    runs-on: ubuntu-latest
+
+  services:
+    postgres:
+      # Docker Hub image
+      image: postgres
+      # Provide the password for postgres
+      env:
+        POSTGRES_PASSWORD: postgres
+      # Set health checks to wait until postgres has started
+      options: >-
+        --health-cmd pg_isready
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
+  
+  steps:
+    - name: checkout papa
+      users: actions/checkout@v3
+    
+    - name: deps
+      env: 
+        MIX_ENV: test
+      run: |
+        mix deps.get
+        mix deps.compile
+    
+    - name: compile
+      env: 
+        MIX_ENV: test
+      run: mix compile --force --warnings-as-errors
+
+    - name: test
+      run: mix test
