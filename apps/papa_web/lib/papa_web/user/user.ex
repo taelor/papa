@@ -10,9 +10,9 @@ defmodule PapaWeb.Schema.User do
     field(:email, :string)
   end
 
-  object :get_users do
+  object :query_users do
     field :users, list_of(:user) do
-      resolve(&UserResolver.list_users/2)
+      resolve(&UserResolver.query_users/2)
     end
   end
 end

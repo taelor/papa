@@ -4,6 +4,6 @@ defmodule PapaWeb.Schema do
   import_types(PapaWeb.Schema.User)
 
   query do
-    import_fields(:get_users)
+    import_fields(:query_users)
   end
 end

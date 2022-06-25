@@ -50,7 +50,7 @@ mix ecto migrate
 mix phx.server
 ```
 
-At this point I want to write some test to make sure my test suite is all wired up correctly, and I can make sure we can validate a User changeset.
+At this point we want to write some test to make sure my test suite is all wired up correctly, and make sure we can validate a User changeset.
 
 Assumption: validation of email format, exisitance, confirmation, etc will come in a future feature.
 
@@ -65,7 +65,7 @@ mix test apps/papa/test/user/user_test.exs
 
 https://github.com/taelor/papa/pull/1/commits/390da4208f0d5c58769750f0ebe68c99d0789b30
 
-Next I want to go ahead and write an API request to create a User. In the job description I noticed Papa uses GraphQL, so I'm going to go ahead and use absinthe for our GraphQL functionality. I used absinthe when I worked at Interfolio, so I'm fairly familiar with it. I also want to include GraphIQL so I can have an easy quick way to interact with the API.
+Next we want to go ahead and write an API request to create a User. In the job description I noticed Papa uses GraphQL, so I'm going to go ahead and use absinthe for our GraphQL functionality. I used absinthe when I worked at Interfolio, so I'm fairly familiar with it. We also want to include GraphIQL so we can have an easy quick way to interact with the API.
 
 ```
 # add absinthe to papa_web mix.exs deps
@@ -77,7 +77,7 @@ mix deps.get
 
 https://github.com/taelor/papa/pull/1/commits/b9e69ed687f75b84784d4bf842b2ed28691f6a0b
 
-At this point, I have graphiql working, but the users query is returning an empty list. I'm going to go ahead and add some users to the seeds.exs file just as another sanity check that everything is wired up, and we can query for users.
+At this point, we have graphiql working, but the users query is returning an empty list. I'm going to go ahead and add some users to the seeds.exs file just as another sanity check that everything is wired up, and we can query for users.
 
 ```
 # add some basic user inserts to the seeds.exs file.
@@ -88,3 +88,16 @@ User.changeset(%User{}, %{first_name: "John", last_name: "Doe", email: "john.doe
 mix ecto.reset
 ```
 
+Now we can go back to the GraphIQL interface and query for Users, and we see the three users we added to the seed file are now showing up properly with their attributes and the auto generated UUID.
+
+https://github.com/taelor/papa/pull/1/commits/ea42598956c6381346e2885a06f550c56d262634
+
+Next, we need to go ahead and get our testing framework setup for querying the graphql api, we can do something simple for now, and expand on it later.
+
+When writing this test, we need to get some data in the database before we make the query. We could continue manually inserting ecto changeset via repo, but I usually start to reach for factories as soon as possible.
+
+Usually I roll my own factories following the ecto guide here: https://hexdocs.pm/ecto/test-factories.html
+
+But since this is a sample app, I thought we could experiment with a package I've always wanted to use, ex_machina. (https://github.com/thoughtbot/ex_machina) I've used thoughtbot's factories for ruby in the past, and while sometimes they were cumbersome or led to particular setup problems, I feel like they've learned a lot in their history, as well as me, and if used properly, factories can be quite helpful in test.
+
+We can go ahead and refactor the Repo.insert in the user_test.exs to use a factory as well.

@@ -1,6 +1,8 @@
 defmodule Papa.UserTest do
   use Papa.DataCase
 
+  import Papa.Factory
+
   alias Papa.User
 
   describe "a changeset with invalid data" do
@@ -49,9 +51,5 @@ defmodule Papa.UserTest do
     %{attrs: %{first_name: "Jane", last_name: "Doe", email: "jdoe@papa.com"}}
   end
 
-  def user(ctx) do
-    {:ok, user} = Repo.insert(User.changeset(%User{}, ctx.attrs))
-
-    %{user: user}
-  end
+  def user(ctx), do: %{user: insert(:user, ctx.attrs)}
 end
