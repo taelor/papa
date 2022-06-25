@@ -10,5 +10,6 @@ defmodule PapaWeb.Schema do
 
   mutation do
     import_fields(:users_mutations)
+    import_fields(:visits_mutations)
   end
 end

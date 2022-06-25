@@ -8,6 +8,10 @@ At my last two jobs I had to implement authentication that orginated in other sy
 
 I didn't see any requirements for authentication, so if I have time, I will plan to implement guardian to allow for API auth.
 
+## Performance
+
+This is not an optomized application. There are things that would not scale, like the GraphQL requests with associations. There is no pagination, we could use something like Relay (https://hexdocs.pm/absinthe/relay.html) for built in pagination functionality so the API couldn't request the world. There are also other liberties and shortcuts taken because this is a sample application, I added a few indexes here and there, but I might have missed some. I'm not using select statements to trim down the amount of columns queried from a table, etc. Batch Resolution in Absinthe (https://hexdocs.pm/absinthe/batching.html) is not something I worried about in this application, but someting I would absolutely do in a produciton app.
+
 # Process
 
 First thing I wanted to do was create a Phoenix app. I almost thought of building just an elixir app and plug to make it more slim, but ultimately figured Papa is using Phoenix so why not just go ahead and use it. 
@@ -128,4 +132,10 @@ mix ecto.reset
 ```
 
 https://github.com/taelor/papa/pull/2/commits/7a325b18664f7f9ea687040c6fc452478d1fc48a
+
+I wanted to show one small (premature) performance optomization we could make here. We could inspect on the graphql query coming in, and only preload the visits table when actually requested. If its not asked for, its not queried for.
+
+https://github.com/taelor/papa/pull/2/commits/e441d19199de1121331994536ac93845d8052809
+
+Now that we can see visits for a user, we can write the mutation for a member to request a visit.
 

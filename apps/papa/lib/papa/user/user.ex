@@ -2,6 +2,7 @@ defmodule Papa.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Papa.Repo
   alias Papa.Visit
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -23,4 +24,8 @@ defmodule Papa.User do
     |> validate_required([:first_name, :last_name, :email])
     |> unique_constraint(:email)
   end
+
+  def get(nil), do: nil
+  def get(""), do: nil
+  def get(id), do: Repo.get(__MODULE__, id)
 end
