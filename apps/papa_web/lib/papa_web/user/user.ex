@@ -8,6 +8,7 @@ defmodule PapaWeb.Schema.User do
     field(:first_name, :string)
     field(:last_name, :string)
     field(:email, :string)
+    field(:visits, list_of(:visit))
   end
 
   object :users_queries do

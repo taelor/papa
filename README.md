@@ -20,6 +20,8 @@ mix phx.new --no-assets --no-html --no-dashboard --no-live --no-mailer --umbrell
 
 ## Feature 1: Users must be able to create accounts
 
+Assumptions: email address should be unique
+
 For the users and roles, I almost went down the route of User <-> Roles with a join table, but realized do we even need that. If anyone can be a member, and anyone can be a pal, at any given time do we really even need explict roles? 
 
 One of the reasons why I decided on this was the sentence "If a member's account has a balance of 0 minutes, they cannot request any more visits until they fulfill visits themselves." To me, that gives the impression that memebers are going to be pals, and maybe quite often?
@@ -27,8 +29,6 @@ One of the reasons why I decided on this was the sentence "If a member's account
 I'm also going to resist all temptations of scope creep and stick to the fisrt_name/last_name, and forget that I've ever read https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/ ;)
 
 (Ask Vanessa sometime about her expertise in dealing with names and aliases)
-
-Assumption: email address should be unique
 
 ```
 mix ecto.create
@@ -109,3 +109,21 @@ Finally, I think we have everything to setup to actually do the feature now, whi
 We are going to want to add a mutatation for the GraphQL API, and write a test for it.
 
 https://github.com/taelor/papa/pull/1/commits/d5d51d8c2ff0d5550e4c0a2053245737c203c7f0
+
+## Feature 2: As a member, a user can request visits. 
+
+Assumptions: I'm only using a date here from the data model, but it might be better to use datetime for more specific scheduling, but as this is a simplified model, we can just use date for now. Also, tasks would probably end up being its own schema/table if we wanted more granular tracking/reporting, but for this simple model. I'm just going to make it a text field, and it will represent what the Member is requesting for their visit. A more complex model would have requested tasks and completed tasks (maybe the same row with a boolean to denote if it was completed). I'm also going to implement this exactly as the specifictions for the second item say, without any balance validation which will come in feature 4. One other assumption is the person requesting the visit isn't going to be estimating how long that visit is going to be, and the minutes field is for how long the visit took.
+
+For this feature the first thing we need to do is create the Visit schema and add the relationships between User and Visit. I will go ahead and add some requested visits to the seeds, and make sure we can see those in the query_users graphql request to make sure the associations are working properly.
+
+```
+cd apps/papa_web/
+
+mix phx.gen.schema Visit visits member_id:references:users date:date minutes:integer tasks:text
+
+cd ../../apps/papa
+
+# run a reset to make sure we pick up the new seeds
+mix ecto.reset
+```
+
