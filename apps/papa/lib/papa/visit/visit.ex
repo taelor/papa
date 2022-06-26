@@ -38,4 +38,8 @@ defmodule Papa.Visit do
       end
     end)
   end
+
+  def get(nil), do: nil
+  def get(""), do: nil
+  def get(id), do: Repo.get(__MODULE__, id)
 end

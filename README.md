@@ -16,6 +16,10 @@ This is not an optomized application. There are things that would not scale, lik
 
 I'm usually really diligent about typespecs and dialyzer, but to save me some time, I omitted this part of my development cycle. This would 100% be something I do for an actual application that would get used and not thrown away.
 
+## Full Refactoring and DRY
+
+Not everything is fully refactored and completely dry. Things like the Resolvers format_errors/1 I just copy/pasted for time. There might be others I just ignored for now for speed and sample app reasons.
+
 # Process
 
 First thing I wanted to do was create a Phoenix app. I almost thought of building just an elixir app and plug to make it more slim, but ultimately figured Papa is using Phoenix so why not just go ahead and use it. 

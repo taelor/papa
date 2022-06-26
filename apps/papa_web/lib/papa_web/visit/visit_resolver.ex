@@ -17,6 +17,18 @@ defmodule PapaWeb.Schema.VisitResolver do
     end
   end
 
+  def fulfill_visit(_parent, args, _resolution) do
+    with {:ok, visit} <- get_visit(args.visit_id),
+         {:ok, pal} <- get_user(args.pal_id) do
+      case Visit.Fulfill.call(visit, pal, args) do
+        {:ok, visit} -> {:ok, visit}
+        {:error, changeset} -> {:error, format_errors(changeset.errors)}
+      end
+    else
+      {:error, error} -> {:error, error}
+    end
+  end
+
   defp parse_date(date_string) do
     case Date.from_iso8601(date_string) do
       {:ok, date} -> {:ok, date}
@@ -28,6 +40,13 @@ defmodule PapaWeb.Schema.VisitResolver do
     case User.get(id) do
       nil -> {:error, "Invalid User"}
       user -> {:ok, user}
+    end
+  end
+
+  defp get_visit(id) do
+    case Visit.get(id) do
+      nil -> {:error, "Invalid Visit"}
+      visit -> {:ok, visit}
     end
   end
 

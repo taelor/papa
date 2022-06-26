@@ -3,6 +3,8 @@ defmodule Papa.Account do
 
   alias Papa.Visit
 
+  @fee 0.15
+
   def start_link(opts) do
     {name, opts} = Keyword.pop(opts, :name)
     GenServer.start_link(__MODULE__, opts, name: name)
@@ -40,6 +42,20 @@ defmodule Papa.Account do
     end
   end
 
+  def credit(user_id, minutes) do
+    case where(user_id) do
+      {:ok, pid} -> GenServer.call(pid, {:credit, minutes})
+      {:error, :not_found} -> {:error, :no_account_server}
+    end
+  end
+
+  def debit(user_id, minutes) do
+    case where(user_id) do
+      {:ok, pid} -> GenServer.call(pid, {:debit, minutes})
+      {:error, :not_found} -> {:error, :no_account_server}
+    end
+  end
+
   # ---------------------------------------------------------------------------
   # Server
   # ---------------------------------------------------------------------------
@@ -49,9 +65,21 @@ defmodule Papa.Account do
     {:reply, state.balance, state}
   end
 
+  def handle_call({:credit, minutes}, _from, state) do
+    new_balance = state.balance + minutes * fee()
+
+    {:reply, new_balance, Map.put(state, :balance, new_balance)}
+  end
+
+  def handle_call({:debit, minutes}, _from, state) do
+    new_balance = state.balance - minutes
+
+    {:reply, new_balance, Map.put(state, :balance, new_balance)}
+  end
+
   @impl true
   def handle_continue(:ledger_balance, %{user_id: id} = state) do
-    balance = 1000 - debit(id) + credit(id)
+    balance = 1000 + sum_credit(id) - sum_debit(id)
 
     {:noreply, Map.put(state, :balance, balance)}
   end
@@ -60,6 +88,8 @@ defmodule Papa.Account do
   # Helpers
   # ---------------------------------------------------------------------------
 
-  def debit(id), do: Visit.Sum.call(:minutes, where: [member_id: id])
-  def credit(id), do: (Visit.Sum.call(:minutes, where: [pal_id: id]) * 0.85) |> round()
+  def sum_credit(id), do: (Visit.Sum.call(:minutes, where: [pal_id: id]) * fee()) |> round()
+  def sum_debit(id), do: Visit.Sum.call(:minutes, where: [member_id: id])
+
+  def fee(), do: 1 - @fee
 end

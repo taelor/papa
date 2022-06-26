@@ -34,6 +34,10 @@ defmodule PapaWeb.CreateUsersTest do
     assert user["first_name"] == "test"
     assert is_binary(user["id"])
     assert user["last_name"] == "user"
+
+    # this is mainly to let the ledger in the handle continue finish
+    # and not display red text in the test suite ;)
+    assert Papa.Account.get_balance(user["id"]) == 1000
   end
 
   describe "when email already exists" do

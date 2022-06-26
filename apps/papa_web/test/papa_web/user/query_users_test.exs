@@ -3,9 +3,12 @@ defmodule PapaWeb.QueryUsersTest do
 
   import Papa.Factory
 
+  alias Papa.Account
+
   @user_query """
   query queryUsers {
     users {
+      balance
       email
       first_name
       id
@@ -36,6 +39,7 @@ defmodule PapaWeb.QueryUsersTest do
     assert Enum.count(users) == 2
 
     assert Enum.at(users, 0) == %{
+             "balance" => 1000,
              "email" => user_1.email,
              "first_name" => user_1.first_name,
              "id" => user_1.id,
@@ -51,8 +55,19 @@ defmodule PapaWeb.QueryUsersTest do
 
   def users(_) do
     user_1 = insert(:user, first_name: "user", last_name: "one", email: "user.one@papa.com")
+    account(user_1.id)
+
     user_2 = insert(:user, first_name: "user", last_name: "two", email: "user.two@papa.com")
+    account(user_2.id)
 
     %{users: [user_1, user_2]}
+  end
+
+  def account(id) do
+    opts = [user_id: id, name: Account.via(id)]
+
+    start_supervised({Account, opts}, id: id)
+
+    Account.get_balance(id)
   end
 end

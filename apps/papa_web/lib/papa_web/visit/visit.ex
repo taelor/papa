@@ -18,5 +18,13 @@ defmodule PapaWeb.Schema.Visit do
 
       resolve(&VisitResolver.request_visit/3)
     end
+
+    field :fulfill_visit, type: :visit do
+      arg(:visit_id, non_null(:integer))
+      arg(:minutes_id, non_null(:integer))
+      arg(:pal_id, non_null(:string))
+
+      resolve(&VisitResolver.fulfill_visit/3)
+    end
   end
 end
