@@ -44,7 +44,7 @@ defmodule PapaWeb.Schema.VisitResolver do
   end
 
   defp get_visit(id) do
-    case Visit.get(id) |> IO.inspect() do
+    case Visit.get(id) do
       nil -> {:error, "Invalid Visit"}
       visit -> {:ok, visit}
     end
