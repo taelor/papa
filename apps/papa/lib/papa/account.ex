@@ -66,7 +66,7 @@ defmodule Papa.Account do
   end
 
   def handle_call({:credit, minutes}, _from, state) do
-    new_balance = state.balance + minutes * fee()
+    new_balance = (state.balance + minutes * fee()) |> round()
 
     {:reply, new_balance, Map.put(state, :balance, new_balance)}
   end

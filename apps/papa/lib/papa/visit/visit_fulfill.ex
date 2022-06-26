@@ -4,12 +4,15 @@ defmodule Papa.Visit.Fulfill do
   alias Papa.{Account, Repo, Visit}
 
   def call(visit, pal, args) do
-    with {:ok, visit} <- update_visit(visit, pal, args) do
+    with {:fulfilled, false} <- fulfilled?(visit),
+         {:ok, visit} <- update_visit(visit, pal, args) do
       # TODO: figure out how to make this atomic,
       # or rollback fist operation on failure of second operation
       Account.debit(visit.member_id, visit.minutes)
       Account.credit(visit.pal_id, visit.minutes)
+      {:ok, visit}
     else
+      {:fulfilled, true} -> {:error, "Visit Already Fulfilled"}
       {:error, error} -> {:error, error}
     end
   end
@@ -24,4 +27,6 @@ defmodule Papa.Visit.Fulfill do
       {:error, changeset} -> {:error, changeset}
     end
   end
+
+  defp fulfilled?(visit), do: {:fulfilled, !is_nil(visit.pal_id)}
 end
