@@ -178,3 +178,11 @@ I want to create a GenServer for each user. And that GenServer is going to hold 
 Now what about when the application goes down and back up? For each user, we can load all their fullfilled visits, and recalcuate their balance.
 
 The first thing we can do, is add some more requested and fullfilled visits to our seeds, create our genserver initialization process, and see if we can get the balances correct.
+
+After that, it was just kind of one of those moments where you get in the zone, go heads down and blast it all out.
+
+For this setup, we can use a DynamicSupervisor to Manage these Account servers, and create/supervise them dynamically when a user is created. They properly ledger a user's balance when they spin up (using continue to not block), and will debit/credit upon visit fulfillment.
+
+There is a lot to this PR, and I would absolutely love to talk about it more in person, so we can discuss the reason why some decisions were made, and what improvements you could make to a system like this (there are some comments scattered throughout)
+
+https://github.com/taelor/papa/pull/5
