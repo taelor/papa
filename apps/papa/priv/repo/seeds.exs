@@ -14,28 +14,37 @@ alias Papa.Repo
 
 alias Papa.User
 
-requested_visits = [
-  %{date: Date.utc_today(), tasks: "Play cards, Clean ceiling fan"},
-  %{date: Date.add(Date.utc_today(), 15), tasks: "Play cards, help take care of garden"}
-]
-
 user_john =
   User.changeset(%User{}, %{first_name: "John", last_name: "Doe", email: "john.doe@papa.com"})
   |> Repo.insert!()
-
-Enum.each(visits, fn visit ->
-  Ecto.build_assoc(user_john, :visits, requested_visits)
-  |> Repo.insert!()
-end)
 
 user_jane =
   User.changeset(%User{}, %{first_name: "Jane", last_name: "Doe", email: "jane.doe@papa.com"})
   |> Repo.insert!()
 
-Enum.each(visits, fn visit ->
-  Ecto.build_assoc(user_jane, :visits, requested_visits)
+user_polly =
+  User.changeset(%User{}, %{first_name: "Polly", last_name: "Pal", email: "polly.pal@papa.com"})
   |> Repo.insert!()
+
+user_perry =
+  User.changeset(%User{}, %{first_name: "Perry", last_name: "Pal", email: "perry.pal@papa.com"})
+  |> Repo.insert!()
+
+
+john_fulfilled_visits = [
+  %{date: Date.utc_today(), tasks: "Play cards, Clean ceiling fan", minutes: 100, pal_id: user_polly.id},
+  %{date: Date.utc_today(), tasks: "Help in Garden", minutes: 50, pal_id: user_perry.id},
+]
+
+Enum.each(john_fulfilled_visits, fn visit ->
+  Ecto.build_assoc(user_john, :requested_visits, visit) |> Repo.insert!()
 end)
 
-User.changeset(%User{}, %{first_name: "Papa", last_name: "Pal", email: "papa.pal@papa.com"})
-|> Repo.insert!()
+jane_fulfilled_visits = [
+  %{date: Date.utc_today(), tasks: "Play cards, Clean ceiling fan", minutes: 100, pal_id: user_polly.id},
+  %{date: Date.utc_today(), tasks: "Help in Garden", minutes: 50, pal_id: user_perry.id},
+]
+
+Enum.each(jane_fulfilled_visits, fn visit ->
+  Ecto.build_assoc(user_jane, :requested_visits, visit) |> Repo.insert!()
+end)

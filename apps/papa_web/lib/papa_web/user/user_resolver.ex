@@ -9,7 +9,7 @@ defmodule PapaWeb.Schema.UserResolver do
 
   defp preloads(resolution) do
     # might be better to get this from the ecto schema instead.
-    associations = MapSet.new([:visits])
+    associations = MapSet.new([:requested_visits, :fulfilled_visits])
 
     # get the fields requested from the graphql api request
     requested_fields =

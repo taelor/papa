@@ -8,14 +8,12 @@ defmodule Papa.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
       Papa.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: Papa.PubSub}
-      # Start a worker by calling: Papa.Worker.start_link(arg)
-      # {Papa.Worker, arg}
+      Papa.AccountSupervisor,
+      {Registry, keys: :unique, name: Account.Registry},
+      {Task, &Papa.AccountSupervisor.start_children/0}
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: Papa.Supervisor)
+    Supervisor.start_link(children, strategy: :rest_for_one, name: Papa.Supervisor)
   end
 end

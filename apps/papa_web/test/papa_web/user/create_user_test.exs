@@ -1,5 +1,7 @@
 defmodule PapaWeb.CreateUsersTest do
-  use PapaWeb.ConnCase
+  use PapaWeb.ConnCase, async: false
+
+  alias Papa.Repo
 
   import Papa.Factory
 
@@ -13,6 +15,15 @@ defmodule PapaWeb.CreateUsersTest do
     }
   }
   """
+
+  # since we dynamically create a GenServer on creating a user,
+  # we can't explictly allow the sandbox to that pid, so we have
+  # to run in shared mode.
+  setup do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Repo, {:shared, self()})
+    :ok
+  end
 
   test "create user", %{conn: conn} do
     conn = post(conn, "/api", %{"query" => @user_query})

@@ -12,6 +12,10 @@ I didn't see any requirements for authentication, so if I have time, I will plan
 
 This is not an optomized application. There are things that would not scale, like the GraphQL requests with associations. There is no pagination, we could use something like Relay (https://hexdocs.pm/absinthe/relay.html) for built in pagination functionality so the API couldn't request the world. There are also other liberties and shortcuts taken because this is a sample application, I added a few indexes here and there, but I might have missed some. I'm not using select statements to trim down the amount of columns queried from a table, etc. Batch Resolution in Absinthe (https://hexdocs.pm/absinthe/batching.html) is not something I worried about in this application, but someting I would absolutely do in a produciton app.
 
+## Typespecs and Dialyzer
+
+I'm usually really diligent about typespecs and dialyzer, but to save me some time, I omitted this part of my development cycle. This would 100% be something I do for an actual application that would get used and not thrown away.
+
 # Process
 
 First thing I wanted to do was create a Phoenix app. I almost thought of building just an elixir app and plug to make it more slim, but ultimately figured Papa is using Phoenix so why not just go ahead and use it. 
@@ -151,4 +155,22 @@ I've gotten to the point, where I almost don't know how to write code, without w
 
 To deploy with confidence, you must have a good test suite, it is a necessary (but not sufficient) condition.
 
+https://github.com/taelor/papa/pull/4
 
+## Feature 3: Visit Fulfillment
+
+At this point, I'm having a hard time understanding how this system would bootstrap itself. When a user signs up, there is nothing the documentation about a user would get minutes, except by fulfilling visits. But if no user can request a visit if their balance is 0, then there would be no visits able to be fulfilled.
+
+So for this example application, we're going simulate the "health plans allow them a certain number of visit hours per year", by giving everyone 1000 hours for free when they sign up! We'll ignore entropy of the system with 15% overhead eventually draining all the minutes from everyone like the heat death of the universe.
+
+> side note: if it wasn't for the 15% overhead, this would almost be something like a LETS or Timebank. 
+https://en.wikipedia.org/wiki/Local_exchange_trading_system
+https://en.wikipedia.org/wiki/Time-based_currency
+
+Now we haven't discussed "account balance", and it isn't listed anywhere in the database. Also, I haven't really been able to use OTP yet. So I'm going to try something.
+
+I want to create a GenServer for each user. And that GenServer is going to hold the state of a user's minutes balance. All actions of requesting and fulfilling are going to go through this GenServer. So we should be able to maintain that account balance as visit come in.
+
+Now what about when the application goes down and back up? For each user, we can load all their fullfilled visits, and recalcuate their balance.
+
+The first thing we can do, is add some more requested and fullfilled visits to our seeds, create our genserver initialization process, and see if we can get the balances correct.

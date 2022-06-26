@@ -4,7 +4,7 @@ defmodule Papa.User.Query do
   alias Papa.Repo
   alias Papa.User
 
-  def call(opts) do
+  def call(opts \\ []) do
     preloads = Keyword.get(opts, :preloads, [])
 
     User

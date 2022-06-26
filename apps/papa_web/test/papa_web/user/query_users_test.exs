@@ -10,7 +10,12 @@ defmodule PapaWeb.QueryUsersTest do
       first_name
       id
       last_name
-      visits {
+      requested_visits {
+        date
+        minutes
+        tasks
+      }
+      fulfilled_visits {
         date
         minutes
         tasks
@@ -35,7 +40,8 @@ defmodule PapaWeb.QueryUsersTest do
              "first_name" => user_1.first_name,
              "id" => user_1.id,
              "last_name" => user_1.last_name,
-             "visits" => []
+             "fulfilled_visits" => [],
+             "requested_visits" => []
            }
   end
 
