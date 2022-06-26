@@ -6,7 +6,7 @@ Some assumptions have been laid out in the Process section below, but in this se
 
 At my last two jobs I had to implement authentication that orginated in other systems, one that used a custom dynamodb session manager and SPA that would sent a session token to validate against. Most recently, I'm using a system that includes Auth0, JWTs, Krakend, etc.
 
-I didn't see any requirements for authentication, so if I have time, I will plan to implement guardian to allow for API auth.
+I didn't see any requirements for authentication, so if I have time, I will plan to implement guardian to allow for API auth. Otherwise, I think there is enough in the sample app to "show us how you think and put your engineering values on display". I'll gladly discuss authentication strategies at any time.
 
 ## Performance
 

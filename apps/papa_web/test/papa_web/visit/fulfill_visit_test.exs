@@ -15,8 +15,8 @@ defmodule PapaWeb.FulfillVisitTest do
     assert is_binary(visit["id"])
     assert visit["minutes"] == 100
 
-    assert Account.get_balance(ctx.member)
-    assert Account.get_balance(ctx.pal)
+    assert Account.get_balance(ctx.member.id) == 900
+    assert Account.get_balance(ctx.pal.id) == 1085
   end
 
   # ---------------------------------------------------------------------------
