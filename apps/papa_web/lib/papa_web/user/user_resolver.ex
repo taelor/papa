@@ -1,15 +1,19 @@
 defmodule PapaWeb.Schema.UserResolver do
   use Absinthe.Schema.Notation
 
-  alias Papa.User
+  alias Papa.{Account, User}
 
   def query_users(_args, resolution) do
-    {:ok, User.Query.call(preloads: preloads(resolution))}
+    users =
+      User.Query.call(preloads: preloads(resolution))
+      |> append_balance(resolution)
+
+    {:ok, users}
   end
 
   defp preloads(resolution) do
     # might be better to get this from the ecto schema instead.
-    associations = MapSet.new([:visits])
+    associations = MapSet.new([:requested_visits, :fulfilled_visits])
 
     # get the fields requested from the graphql api request
     requested_fields =
@@ -18,6 +22,19 @@ defmodule PapaWeb.Schema.UserResolver do
       |> MapSet.new()
 
     MapSet.intersection(associations, requested_fields) |> MapSet.to_list()
+  end
+
+  defp append_balance(users, resolution) do
+    case query_contains?(resolution, :balance) do
+      true -> Enum.map(users, fn user -> struct(user, balance: Account.get_balance(user.id)) end)
+      false -> users
+    end
+  end
+
+  def query_contains?(resolution, field) do
+    resolution.definition.selections
+    |> Enum.map(& &1.schema_node.identifier)
+    |> Enum.member?(field)
   end
 
   def create_user(_parent, args, _resolution) do

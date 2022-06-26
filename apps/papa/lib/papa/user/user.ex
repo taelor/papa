@@ -12,7 +12,10 @@ defmodule Papa.User do
     field(:first_name, :string)
     field(:last_name, :string)
 
-    has_many(:visits, Visit, foreign_key: :member_id)
+    has_many(:requested_visits, Visit, foreign_key: :member_id)
+    has_many(:fulfilled_visits, Visit, foreign_key: :pal_id)
+
+    field(:balance, :integer, virtual: true)
 
     timestamps()
   end

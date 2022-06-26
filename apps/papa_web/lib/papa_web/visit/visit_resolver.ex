@@ -10,7 +10,19 @@ defmodule PapaWeb.Schema.VisitResolver do
 
       case Visit.Create.call(user, args) do
         {:ok, visit} -> {:ok, visit}
-        {:error, changeset} -> {:error, format_errors(changeset.errors)}
+        {:error, error} -> {:error, format_errors(error)}
+      end
+    else
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  def fulfill_visit(_parent, args, _resolution) do
+    with {:ok, visit} <- get_visit(args.visit_id),
+         {:ok, pal} <- get_user(args.pal_id) do
+      case Visit.Fulfill.call(visit, pal, args) do
+        {:ok, visit} -> {:ok, visit}
+        {:error, error} -> {:error, format_errors(error)}
       end
     else
       {:error, error} -> {:error, error}
@@ -31,7 +43,16 @@ defmodule PapaWeb.Schema.VisitResolver do
     end
   end
 
-  defp format_errors(errors) do
-    Enum.map(errors, fn {field, {message, _}} -> "#{field} #{message}" end)
+  defp get_visit(id) do
+    case Visit.get(id) do
+      nil -> {:error, "Invalid Visit"}
+      visit -> {:ok, visit}
+    end
+  end
+
+  defp format_errors(error) when is_binary(error), do: error
+
+  defp format_errors(changeset) do
+    Enum.map(changeset.errors, fn {field, {message, _}} -> "#{field} #{message}" end)
   end
 end
