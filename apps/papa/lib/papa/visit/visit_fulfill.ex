@@ -1,6 +1,4 @@
 defmodule Papa.Visit.Fulfill do
-  import Ecto.Query
-
   alias Papa.{Account, Repo, Visit}
 
   def call(visit, pal, args) do
