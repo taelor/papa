@@ -34,7 +34,8 @@ defmodule PapaWeb.QueryUsersTest do
              "email" => user_1.email,
              "first_name" => user_1.first_name,
              "id" => user_1.id,
-             "last_name" => user_1.last_name
+             "last_name" => user_1.last_name,
+             "visits" => []
            }
   end
 
