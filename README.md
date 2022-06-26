@@ -139,3 +139,10 @@ https://github.com/taelor/papa/pull/2/commits/e441d19199de1121331994536ac93845d8
 
 Now that we can see visits for a user, we can write the mutation for a member to request a visit.
 
+https://github.com/taelor/papa/pull/2/commits/012903d24b8a9d0a8e3085a0c86ee71621befea7
+
+## Interlude: Github Actions
+
+Oh no, a failing test made its way into main!
+
+Early on in writing an application, I like to get github actions setup for PRs to run the test suite, check for compile warnings, as well as run dialyzer.
