@@ -1,3 +1,86 @@
+# Running the app
+
+You should be able to run this just like any normal phoenix application. Checkout the code, run the setup, mix test, and then the server. You will need postgres installed.
+
+```
+mix setup
+
+mix test
+
+mix phx.server
+```
+
+After this you should be able to use the graphiql interface at http://localhost:4000/graphiql. Below is a set of sample queries you can use to interact with the API using graphiql. You will need to change some of the mutations to use UUIDs that are specific to your local setup.
+
+```
+query queryUsers{
+  users {
+    id
+    firstName
+    lastName
+    email
+    balance
+  }
+}
+
+query queryUsersWithVisits{
+  users {
+    balance
+    id
+    firstName
+    lastName
+    email
+    requestedVisits{
+      id
+      minutes
+      tasks
+    }
+    fulfilledVisits{
+      id
+      minutes
+      tasks
+    }
+  }
+}
+
+mutation createUser {
+  createUser(firstName: "test", lastName: "user", email: "test.user@papa.com"){
+    email
+    firstName
+    id
+    lastName
+  }
+}
+
+mutation requestVisitBadDate {
+  requestVisit(date: "20200701", tasks: "", memberId:""){
+    id
+    tasks
+  }
+}
+
+mutation requestVisitBadMember {
+  requestVisit(date: "2020-07-01", tasks: "Just hang out", memberId:""){
+    id
+    tasks
+  }
+}
+
+mutation requestVisit {
+  requestVisit(date: "2020-07-01", tasks: "Just hang out", memberId:"1084354a-bb01-4588-b120-45597e29bfb4"){
+    id
+    tasks
+  }
+}
+
+mutation fulfillVisit {
+  fulfillVisit(visitId:"c1b6ff1e-add1-42cc-9fc9-d45fd7d40cf9", palId:"16296900-fea1-4bfa-b2e0-cc20bacc0d36", minutes:100){
+    id
+    tasks
+  }
+}
+```
+
 # General Assumptions:
 
 Some assumptions have been laid out in the Process section below, but in this section I will list some general assumptions.
@@ -19,6 +102,10 @@ I'm usually really diligent about typespecs and dialyzer, but to save me some ti
 ## Full Refactoring and DRY
 
 Not everything is fully refactored and completely dry. Things like the Resolvers format_errors/1 I just copy/pasted for time. There might be others I just ignored for now for speed and sample app reasons.
+
+## Docker
+
+I just did this on my host machine to save time on getting a docker container setup for local developement. It would make it easier to run on different machines.
 
 # Process
 
@@ -168,8 +255,10 @@ At this point, I'm having a hard time understanding how this system would bootst
 So for this example application, we're going simulate the "health plans allow them a certain number of visit hours per year", by giving everyone 1000 hours for free when they sign up! We'll ignore entropy of the system with 15% overhead eventually draining all the minutes from everyone like the heat death of the universe.
 
 > side note: if it wasn't for the 15% overhead, this would almost be something like a LETS or Timebank. 
-https://en.wikipedia.org/wiki/Local_exchange_trading_system
-https://en.wikipedia.org/wiki/Time-based_currency
+> 
+> https://en.wikipedia.org/wiki/Local_exchange_trading_system
+>
+> https://en.wikipedia.org/wiki/Time-based_currency
 
 Now we haven't discussed "account balance", and it isn't listed anywhere in the database. Also, I haven't really been able to use OTP yet. So I'm going to try something.
 
@@ -186,3 +275,11 @@ For this setup, we can use a DynamicSupervisor to Manage these Account servers, 
 There is a lot to this PR, and I would absolutely love to talk about it more in person, so we can discuss the reason why some decisions were made, and what improvements you could make to a system like this (there are some comments scattered throughout)
 
 https://github.com/taelor/papa/pull/5
+
+## Feature 4: Prevent Visit Request on Zero Balance or Less
+
+This one was fairly easy now that all the heavy lifting was done.
+
+One thing to note, I did put this check fairly low down in the stack for the Visit.Create as opposed to higher up in the resolver or something. This would be the time where I would discuss with the team a holistic approach to this validation, and maybe have a ticket to refactor and tighten up the error handling and validation.
+
+https://github.com/taelor/papa/pull/6
