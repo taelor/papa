@@ -5,6 +5,7 @@ defmodule PapaWeb.Schema.Visit do
 
   object :visit do
     field(:id, :id)
+    field(:date, :string)
     field(:minutes, :integer)
     field(:tasks, :string)
   end
