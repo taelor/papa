@@ -2,6 +2,7 @@ defmodule PapaWeb.Schema do
   use Absinthe.Schema
 
   import_types(PapaWeb.Schema.User)
+  import_types(PapaWeb.Schema.Visit)
 
   query do
     import_fields(:users_queries)
@@ -9,5 +10,6 @@ defmodule PapaWeb.Schema do
 
   mutation do
     import_fields(:users_mutations)
+    import_fields(:visits_mutations)
   end
 end

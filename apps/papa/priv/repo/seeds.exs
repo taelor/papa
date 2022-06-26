@@ -14,11 +14,28 @@ alias Papa.Repo
 
 alias Papa.User
 
-User.changeset(%User{}, %{first_name: "John", last_name: "Doe", email: "john.doe@papa.com"})
-|> Repo.insert!()
+requested_visits = [
+  %{date: Date.utc_today(), tasks: "Play cards, Clean ceiling fan"},
+  %{date: Date.add(Date.utc_today(), 15), tasks: "Play cards, help take care of garden"}
+]
 
-User.changeset(%User{}, %{first_name: "Jane", last_name: "Doe", email: "jane.doe@papa.com"})
-|> Repo.insert!()
+user_john =
+  User.changeset(%User{}, %{first_name: "John", last_name: "Doe", email: "john.doe@papa.com"})
+  |> Repo.insert!()
+
+Enum.each(visits, fn visit ->
+  Ecto.build_assoc(user_john, :visits, requested_visits)
+  |> Repo.insert!()
+end)
+
+user_jane =
+  User.changeset(%User{}, %{first_name: "Jane", last_name: "Doe", email: "jane.doe@papa.com"})
+  |> Repo.insert!()
+
+Enum.each(visits, fn visit ->
+  Ecto.build_assoc(user_jane, :visits, requested_visits)
+  |> Repo.insert!()
+end)
 
 User.changeset(%User{}, %{first_name: "Papa", last_name: "Pal", email: "papa.pal@papa.com"})
 |> Repo.insert!()

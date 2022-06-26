@@ -10,6 +10,11 @@ defmodule PapaWeb.QueryUsersTest do
       first_name
       id
       last_name
+      visits {
+        date
+        minutes
+        tasks
+      }
     }
   }
   """
